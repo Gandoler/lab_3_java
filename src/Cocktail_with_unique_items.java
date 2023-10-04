@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Cocktail_with_unique_items extends Cocktail{
+public class Cocktail_with_unique_items extends Cocktail {
     private List<Unigue_ingridients> unigueIngridients;
     public Cocktail_with_unique_items(String name_of_cocktail) {
         super(name_of_cocktail);

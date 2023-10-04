@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
@@ -6,7 +7,8 @@ public class cfg_reader {
     private Properties properties;
     public cfg_reader(String File_name){
         properties = new Properties();
-        try (FileInputStream inputStream = new FileInputStream(File_name)){
+        File F_name = new File(File_name);
+        try (FileInputStream inputStream = new FileInputStream(F_name.getAbsolutePath())){
             properties.load(inputStream);
         }catch (IOException exception){
             exception.printStackTrace();

@@ -52,8 +52,33 @@ public class Global_Menu {
                 base.Cocktail_data_base_safe();
                 return false;
             case 2:
+                int ans = new Work_with_cocktail().Menu();
+                switch (ans) {
+                    case 0 -> {
+                        return true;
+                    }
+                    case 1 -> {
+                        int ans_tmp = 1;
+                        boolean validInput = false;
+                        System.out.println("Сколько коктейлей добавить?");
+                        while (!validInput) {
+                            try {
+                                Scanner scanner = new Scanner(System.in);
+                                ans_tmp = scanner.nextInt();
+                                if (ans_tmp > 0 & ans_tmp < 100) {
+                                    validInput = true;
+                                } else {
+                                    System.err.println("Ошибка: Число не должно быть больше 100 и меньше 1.");
+                                }
+                            } catch (NumberFormatException e) {
+                                System.err.println("Ошибка: Введите корректное число.");
+                            }
+                        }
+                        base.Cocktail_add(ans_tmp);
+                        return true;
+                    }
+                }
 
-                return true;
 
             case 3:
                 return true;

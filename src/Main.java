@@ -12,16 +12,16 @@ public class Main {
 
         Scanner scanner= new Scanner(System.in);
         System.out.println("Введите имя пользователя:");
-        String login = scanner.nextLine();
+        String login = scanner.nextLine().trim();
         System.out.println("Введите пароль:");
-        String password = scanner.nextLine();
+        String password = scanner.nextLine().trim();
         cfg_reader user_log_in = new cfg_reader(login,password);
-        Cocktail_data_base base= new Cocktail_data_base(1,"cocktail_base.txt");
+        Cocktail_data_base base= new Cocktail_data_base("cocktail_base.txt");
         if ((user_log_in.equals(admin)) || (user_log_in.equals(user))){
             boolean choice=true;
             while(choice){
                 Global_Menu cickl= new Global_Menu(user_log_in==admin);
-                cickl.Menu(base);
+                choice = cickl.Menu(base);
 
             }
         }

@@ -1,62 +1,96 @@
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.io.File;
 
+
 public class Cocktail_data_base {
-    private Cocktail_with_unique_items[] cocktail_list ;
+    private java.util.ArrayList<Cocktail_with_unique_items> ArrayList;
+    private ArrayList<Cocktail_with_unique_items> base  = new ArrayList<>();
     private File File_name;
 
-    public Cocktail_data_base(int amount,String File_name) {
-        if (amount < 1) {
-            throw new IllegalArgumentException("Число должно быть больше 0 при создании класса");
-        }
+    public Cocktail_data_base(String File_name) {
         this.File_name = new File(File_name);
         if (!this.File_name.exists() || this.File_name.length()==0) {
+            boolean validInput = false;
+            int amount=1;
+            System.out.println("Первичное заполнение -введите количество добавляемых коктейлей");
+            do {
+                try {
+                    Scanner scanner = new Scanner(System.in);
+                    amount = scanner.nextInt();
+                    if (amount > 1 & amount < 100) {
+                        validInput = true;
+                    } else {
+                        System.err.println("Ошибка: Число не должно быть больше 100 и меньше 0.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.err.println("Ошибка: Введите корректное число.");
+                }
+            }while(!validInput);
+
+
             for (int i = 0; i < amount; i++) {
-                this.cocktail_list[i] = new Cocktail_with_unique_items(new Random_string_generator().generate_random_string());
+                this.base.add(new Cocktail_with_unique_items(new Random_string_generator().generate_random_string()));
             }
         } else {
             List<String> tmp_list = new Data_baze_loader().load_data_baze(this.File_name.getAbsolutePath());
             int amount_of_base = Integer.parseInt(tmp_list.get(0));
-            for (int i = 0; i < amount_of_base; i+=4) {
-                this.cocktail_list[i] = new Cocktail_with_unique_items(tmp_list.get(i+1));
-                String [] actions_from_file = tmp_list.get(i+2).split(" ");
-                for(int j=0; j<actions_from_file.length;j++){
-                    this.cocktail_list[i].setActions(Actions.valueOf(actions_from_file[j]));
+            for(int i = 1;i<amount_of_base+1;i++){
+                /// бьем по пробелам
+                String[] mas = tmp_list.get(i).split(" ");
+                int last_index = mas.length;
+                int binary_mask =Integer.parseInt(mas[last_index-1],2);
+                boolean unique_load = binary_mask % 2 == 1;
+                binary_mask = binary_mask >>1;
+                boolean Acttions_load = binary_mask % 2 == 1;
+                binary_mask = binary_mask >>1;
+                boolean Ingredient_load = binary_mask % 2 == 1;
+                binary_mask = binary_mask >>1;
+
+                // запись имени
+                this.base.add(new Cocktail_with_unique_items(mas[0]));
+                //Запись ингердиентов
+                if(Ingredient_load) {
+                    String[] Ingredient_mas = mas[1].split(";");
+                    for (String items : Ingredient_mas) {
+                        String[] name_and_value = items.split("-");
+                        this.base.get(i - 1).setIngredients(new Ingredient(name_and_value[0], Double.parseDouble(name_and_value[1])));
+                    }
                 }
-                String [] ingredients_from_file = tmp_list.get(i+3).split(" ");
-                for(int j=0; j<ingredients_from_file.length;j++){
-                    String[] tmp_for_ingredients =ingredients_from_file[j].split("-");
-                    this.cocktail_list[i].setIngredients(new Ingredient(tmp_for_ingredients[0],Double.parseDouble(tmp_for_ingredients[1]) ));
+                //Запись действий
+                if(Acttions_load) {
+                    String[] Acttions_mas = mas[2].split(";");
+                    for (String item : Acttions_mas) {
+                        this.base.get(i - 1).setActions(Actions.valueOf(item));
+                    }
                 }
-                String[] unique_ingredients_from_file = tmp_list.get(i+4).split(" ");
-                for(int j=0; j<unique_ingredients_from_file.length;j++){
-                    this.cocktail_list[i].setUnigueIngridients(Unigue_ingridients.valueOf(unique_ingredients_from_file[j]));
+
+                //Запись уникальные действие
+                if(unique_load) {
+                    String[] unique_mas = mas[3].split(";");
+                    for (String item : unique_mas) {
+                        this.base.get(i - 1).setUnigueIngridients(Unigue_ingridients.valueOf(item));
+                    }
                 }
-            }
-            for (int i = this.cocktail_list.length; i < this.cocktail_list.length+amount; i++) {
-                this.cocktail_list[i] = new Cocktail_with_unique_items(new Random_string_generator().generate_random_string());
             }
         }
     }
 
 
     public void Cocktail_add(int amount) {
-        int index = this.cocktail_list.length + amount;
-        for (int i = this.cocktail_list.length; i < index; i++) {
+        int index = this.base.size() + amount;
+        for (int i = this.base.size(); i < index; i++) {
             System.out.println("Введите название коктейля");
             Scanner scanner = new Scanner(System.in);
             String name_of_cocktail = scanner.nextLine();
-            this.cocktail_list[i] = new Cocktail_with_unique_items(name_of_cocktail);
+            this.base.add( new Cocktail_with_unique_items(name_of_cocktail));
             boolean answer;
 
             if (answer = new New_cocktail_add_menu().Menu("уникальных ингридиенты")) {
-                System.out.println("Сколько добавить ингредиентов?");
+                System.out.println("Сколько добавить уникальных игридиентов?");
                 int choice = 0;
                 boolean validInput = false;
                 while (!validInput) {
@@ -75,7 +109,7 @@ public class Cocktail_data_base {
                 for (int j = 0; j < choice; j++) {
                     Unigue_ingridients[] values = Unigue_ingridients.values();
                     int randomIndex = new Random().nextInt(values.length);
-                    this.cocktail_list[i].setUnigueIngridients(values[randomIndex]);
+                    this.base.get(i).setUnigueIngridients(values[randomIndex]);
                 }
             }
 
@@ -99,7 +133,7 @@ public class Cocktail_data_base {
                 for (int j = 0; j < choice; j++) {
                     Actions[] actions = Actions.values();
                     int randomIndex = new Random().nextInt(actions.length);
-                    this.cocktail_list[i].setActions(actions[randomIndex]);
+                    this.base.get(i).setActions(actions[randomIndex]);
                 }
 
 
@@ -123,9 +157,16 @@ public class Cocktail_data_base {
                 }
 
                 for (int j = 0; j < choice; j++) {
+                    System.out.println("Ввeдите название ингридиента");
                     String ingredient = scanner.nextLine();
-                    Double value = scanner.nextDouble();
-                    this.cocktail_list[i].setIngredients(new Ingredient(ingredient,value));
+                    scanner.nextLine();
+
+                    System.out.println("Ввeдите обьем");
+
+                    double value = scanner.nextDouble();
+
+
+                    this.base.get(i).setIngredients(new Ingredient(ingredient,value));
                 }
 
 
@@ -135,41 +176,75 @@ public class Cocktail_data_base {
 
 
     public boolean get_info_about_cocktail_by_index(int index){
-        if (index>this.cocktail_list.length){
+        if (index>this.base.size()){
             System.out.println("Слишком большой индекс введен");
             return false;
         }
-        this.cocktail_list[index].get_info_about_cocktail();
+        this.base.get(index).get_info_about_cocktail();
         return true;
 
     }
 
 
     public void Cocktail_data_base_safe(){
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.File_name.getAbsolutePath()))){
-            writer.write(this.cocktail_list.length);
-            for (int i = 0;i<this.cocktail_list.length;i++){
-                writer.write(this.cocktail_list[i].getName_of_cocktail());
+        try {
+            String encoding = "UTF-8";
+            FileOutputStream fos = new FileOutputStream(this.File_name.getAbsolutePath());
+            OutputStreamWriter osw = new OutputStreamWriter(fos, encoding);
+            BufferedWriter writer = new BufferedWriter(osw);
+            writer.write(Integer.toString(this.base.size())+'\n');
+            for (int i = 0;i<this.base.size();i++){
+                int result_load = 0b1;
+                //запись имени
+                writer.write(this.base.get(i).getName_of_cocktail()+' ');
                 StringBuilder result = new StringBuilder();
-                for (Actions item : this.cocktail_list[i].getActions()) {
-                    result.append(item).append(" ");
-                }
-                writer.write(result.toString().trim());
-                result.delete(0,result.length());
-                for (Ingredient item : this.cocktail_list[i].getIngredients()){
-                    result.append(item.to_string()).append(" ");
-                }
-                writer.write(result.toString().trim());
-                result.delete(0,result.length());
-                for (Unigue_ingridients item : this.cocktail_list[i].get_UnigueIngridients()){
-                    result.append(item.toString()).append(" ");
-                }
-                writer.write(result.toString().trim());
+
+                //запись ингридиентов
+                if(!this.base.get(i).getIngredients().isEmpty()) {
+                    for (Ingredient item : this.base.get(i).getIngredients()) {
+                        result.append(item.to_string()).append(";");
+
+                    }
+                    writer.write(result.toString().trim() + ' ');
+                    result.delete(0, result.length());
+                    result_load = result_load << 1;
+                    result_load = result_load+0b1;
+                }else{result_load = result_load << 1 ;}
+
+                //запись Действий
+                if(!this.base.get(i).getActions().isEmpty()) {
+                    for (Actions item : this.base.get(i).getActions()) {
+                        result.append(item).append(";");
+                    }
+                    writer.write(result.toString().trim() + ' ');
+                    result.delete(0, result.length());
+                    result_load = result_load << 1;
+                    result_load = result_load+0b1;
+                }else{result_load = result_load << 1;}
+
+
+//cNKd 1000
+                //запись уникальных ингридиентов
+                if (!this.base.get(i).get_UnigueIngridients().isEmpty()) {
+                    for (Unigue_ingridients item : this.base.get(i).get_UnigueIngridients()) {
+                        result.append(item.toString()).append(";");
+                    }
+                    writer.write(result.toString().trim() + ' ');
+                    result.delete(0, result.length());
+                    result_load = result_load << 1;
+                    result_load = result_load+0b1;
+                }else{result_load = result_load << 1;}
+
+
+                //запись бинарного числа
+                writer.write(Integer.toBinaryString(result_load) + '\n');
             }
+            writer.close();
 
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
 }
