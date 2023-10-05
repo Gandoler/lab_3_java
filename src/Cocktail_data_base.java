@@ -11,9 +11,9 @@ public class Cocktail_data_base {
     private ArrayList<Cocktail_with_unique_items> base  = new ArrayList<>();
     private File File_name;
 
-    public Cocktail_data_base(String File_name) {
+    public Cocktail_data_base(String File_name,ArrayList<String> logs) {
         this.File_name = new File(File_name);
-        if (!this.File_name.exists() || this.File_name.length()==0) {
+        if (!this.File_name.getAbsoluteFile().exists() || this.File_name.getAbsoluteFile().length()==0) {
             boolean validInput = false;
             int amount=1;
             System.out.println("Первичное заполнение -введите количество добавляемых коктейлей");
@@ -23,11 +23,13 @@ public class Cocktail_data_base {
                     amount = scanner.nextInt();
                     if (amount > 1 & amount < 100) {
                         validInput = true;
+                        logs.add("Первичное заполнение - успешно");
                     } else {
                         System.err.println("Ошибка: Число не должно быть больше 100 и меньше 0.");
                     }
                 } catch (NumberFormatException e) {
                     System.err.println("Ошибка: Введите корректное число.");
+                    logs.add("Ошибка,Первичное заполнение-невероне число");
                 }
             }while(!validInput);
 
@@ -76,11 +78,12 @@ public class Cocktail_data_base {
                     }
                 }
             }
+            logs.add("Файл загружен");
         }
     }
 
 
-    public void Cocktail_add(int amount) {
+    public void Cocktail_add(int amount, ArrayList<String> logs) {
         int index = this.base.size() + amount;
         for (int i = this.base.size(); i < index; i++) {
             System.out.println("Введите название коктейля");
@@ -99,11 +102,14 @@ public class Cocktail_data_base {
                         choice = scanner.nextInt();
                         if (choice > -1 & choice < 4) {
                             validInput = true;
+                            logs.add("Сколько добавить уникальных игридиентов" + choice);
                         } else {
                             System.err.println("Ошибка: Число не должно быть больше 4 и меньше -1.");
+                            logs.add("Сколько добавить уникальных игридиентов? - Ошибка число не подходит" );
                         }
                     } catch (NumberFormatException e) {
                         System.err.println("Ошибка: Введите корректное число.");
+                        logs.add("Сколько добавить уникальных игридиентов? - Ошибка число не подходит" );
                     }
                 }
                 for (int j = 0; j < choice; j++) {
@@ -125,9 +131,11 @@ public class Cocktail_data_base {
                             validInput = true;
                         } else {
                             System.err.println("Ошибка: Число не должно быть больше 4 и меньше -1.");
+                            logs.add("Сколько добавить действий?" + choice);
                         }
                     } catch (NumberFormatException e) {
                         System.err.println("Ошибка: Введите корректное число.");
+                        logs.add("Сколько добавить действий? - Ошибка число не подходит" );
                     }
                 }
                 for (int j = 0; j < choice; j++) {
@@ -150,9 +158,11 @@ public class Cocktail_data_base {
                             validInput = true;
                         } else {
                             System.err.println("Ошибка: Число не должно быть больше 4 и меньше 0.");
+                            logs.add("Сколько добавить Ингредиентов?" + choice );
                         }
                     } catch (NumberFormatException e) {
                         System.err.println("Ошибка: Введите корректное число.");
+                        logs.add("Сколько добавить Ингредиентов?- Ошибка число не подходит" );
                     }
                 }
 
@@ -188,7 +198,7 @@ public class Cocktail_data_base {
     }
 
 
-    public void Cocktail_data_base_safe(){
+    public void Cocktail_data_base_safe(ArrayList<String> logs){
         try {
             String encoding = "UTF-8";
             FileOutputStream fos = new FileOutputStream(this.File_name.getAbsolutePath());
@@ -242,10 +252,11 @@ public class Cocktail_data_base {
                 writer.write(Integer.toBinaryString(result_load) + '\n');
             }
             writer.close();
-
+            logs.add("Файл успешно сохранен");
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.err.println("Ошибка сохранение файла");
+            logs.add("Ошибка сохранение файла");
         }
 
     }
@@ -260,7 +271,8 @@ public class Cocktail_data_base {
         this.base.get(index).setUnigueIngridients(values[randomIndex]);
     }
 
-    public void del_cocktail (int index){
+    public void del_cocktail (int index, ArrayList<String> logs){
         this.base.remove(index);
+        logs.add("Коктейл удален");
     }
 }

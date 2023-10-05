@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Work_with_cocktail {
-    public int Menu(){
+    public int Menu(ArrayList<String> logs){
         int choice = 0;
         boolean validInput = false;
         System.out.println("Выберите действие");
@@ -23,6 +23,7 @@ public class Work_with_cocktail {
                 System.err.println("Ошибка: Введите корректное число.");
             }
         }
+        logs.add("Выберите действие работа с меню" + choice);
         return choice;
     }
 }

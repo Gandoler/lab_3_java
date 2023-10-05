@@ -14,6 +14,7 @@ public class Data_baze_loader {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
         return lines;
     }
 }
