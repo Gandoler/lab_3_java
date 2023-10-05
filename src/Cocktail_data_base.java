@@ -7,7 +7,7 @@ import java.io.File;
 
 
 public class Cocktail_data_base {
-    private java.util.ArrayList<Cocktail_with_unique_items> ArrayList;
+
     private ArrayList<Cocktail_with_unique_items> base  = new ArrayList<>();
     private File File_name;
 
@@ -157,9 +157,11 @@ public class Cocktail_data_base {
                 }
 
                 for (int j = 0; j < choice; j++) {
+
                     System.out.println("Ввeдите название ингридиента");
-                    String ingredient = scanner.nextLine();
-                    scanner.nextLine();
+                    String ingredient = scanner.next();
+
+
 
                     System.out.println("Ввeдите обьем");
 
@@ -246,5 +248,19 @@ public class Cocktail_data_base {
             throw new RuntimeException(e);
         }
 
+    }
+
+
+    public int Get_size(){
+        return this.base.size();
+    }
+    public void add_Unique_ingredients(int index){
+        Unigue_ingridients[] values = Unigue_ingridients.values();
+        int randomIndex = new Random().nextInt(values.length);
+        this.base.get(index).setUnigueIngridients(values[randomIndex]);
+    }
+
+    public void del_cocktail (int index){
+        this.base.remove(index);
     }
 }

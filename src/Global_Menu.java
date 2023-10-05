@@ -1,3 +1,4 @@
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Global_Menu {
@@ -77,14 +78,75 @@ public class Global_Menu {
                         base.Cocktail_add(ans_tmp);
                         return true;
                     }
+
+                    case 2->{
+                        Scanner scanner= new Scanner(System.in);
+                        boolean valid_input = false;
+                        int choice_2=0;
+                        System.out.println("В каком коктейле вы хотите добавить уникальные ингредиенты?");
+                        while (!valid_input){
+                            try {
+                                choice_2 = scanner.nextInt();
+                                if(choice_2>=0 && choice<base.Get_size()){
+                                    valid_input = true;
+                                }
+                                else{
+                                    System.out.println("Число должно быть не меньше 0 и не больше количесва коктейлей");
+                                }
+
+                            }catch (InputMismatchException e){
+                                System.out.println("Ошибка: Введено не число");
+                            }
+                        }
+
+
+                        scanner.close();
+                        System.out.println("Сколько добавить уникальных игридиентов?");
+                        int value = 0;
+                        boolean validInput = false;
+                        while (!validInput) {
+                            try {
+                                scanner = new Scanner(System.in);
+                                value = scanner.nextInt();
+                                if (value > -1 & value < 4) {
+                                    validInput = true;
+                                } else {
+                                    System.err.println("Ошибка: Число не должно быть больше 4 и меньше -1.");
+                                }
+                            } catch (NumberFormatException e) {
+                                System.err.println("Ошибка: Введите корректное число.");
+                            }
+                        }
+
+                        for(int j=0;j<value;j++){
+                            base.add_Unique_ingredients(choice_2);
+                        }
+
+                    }
+
+                    case 3->{
+                        Scanner scanner= new Scanner(System.in);
+                        boolean valid_input = false;
+                        int choice_2=0;
+                        System.out.println("Какой коктейль вы хотите удалить?");
+                        while (!valid_input){
+                            try {
+                                choice_2 = scanner.nextInt();
+                                if(choice_2>=0 && choice<base.Get_size()){
+                                    valid_input = true;
+                                }
+                                else{
+                                    System.out.println("Число должно быть не меньше 0 и не больше количесва коктейлей");
+                                }
+
+                            }catch (InputMismatchException e){
+                                System.out.println("Ошибка: Введено не число");
+                            }
+                        }
+                        base.del_cocktail(choice_2);
+                    }
                 }
 
-
-            case 3:
-                return true;
-
-            case 4:
-                return true;
 
             default:
                 return false;

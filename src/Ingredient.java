@@ -28,6 +28,6 @@ public class Ingredient {
     }
 
     public String to_string(){
-        return "" + this.name_of_ingredient + '-' + this.quantity;
+        return  this.name_of_ingredient + '-' + this.quantity;
     }
 }
