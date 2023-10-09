@@ -25,5 +25,6 @@ public class Work_with_cocktail {
         }
         logs.add("Выберите действие работа с меню" + choice);
         return choice;
+
     }
 }

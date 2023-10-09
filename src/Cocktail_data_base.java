@@ -221,7 +221,10 @@ public class Cocktail_data_base {
                     result.delete(0, result.length());
                     result_load = result_load << 1;
                     result_load = result_load+0b1;
-                }else{result_load = result_load << 1 ;}
+                }else{
+                    result_load = result_load << 1 ;
+                    writer.write("Empty_value" + ' ');
+                }
 
                 //запись Действий
                 if(!this.base.get(i).getActions().isEmpty()) {
@@ -232,7 +235,10 @@ public class Cocktail_data_base {
                     result.delete(0, result.length());
                     result_load = result_load << 1;
                     result_load = result_load+0b1;
-                }else{result_load = result_load << 1;}
+                }else{
+                    result_load = result_load << 1;
+                    writer.write("Empty_value" + ' ');
+                }
 
 
 //cNKd 1000
@@ -245,7 +251,10 @@ public class Cocktail_data_base {
                     result.delete(0, result.length());
                     result_load = result_load << 1;
                     result_load = result_load+0b1;
-                }else{result_load = result_load << 1;}
+                }else{
+                    result_load = result_load << 1;
+                    writer.write("Empty_value" + ' ');
+                }
 
 
                 //запись бинарного числа
